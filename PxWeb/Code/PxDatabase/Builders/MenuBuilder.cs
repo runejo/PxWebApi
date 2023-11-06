@@ -9,6 +9,7 @@ using PxWeb.Config.Api2;
 using Px.Abstractions.Interfaces;
 using Microsoft.Extensions.Logging;
 using Px.Search;
+using System.Globalization;
 
 namespace PXWeb.Database
 {
@@ -294,8 +295,13 @@ namespace PXWeb.Database
 
             TableLink tbl = new TableLink(!string.IsNullOrEmpty(meta.Description) ? meta.Description : meta.Title,
                 meta.Matrix, _sortOrder(meta, path), cid.Menu, cid.Selection, meta.Description ?? "", LinkType.PX,
-                TableStatus.AccessibleToAll, null, meta.GetFirstTimeValue() , meta.GetLastTimeValue(), meta.Matrix ?? "", PresCategory.Official);
+                TableStatus.AccessibleToAll, null, null, meta.GetFirstTimeValue(), meta.GetLastTimeValue(), meta.Matrix ?? "", PresCategory.Official);
             
+            // TODO this should be in configuration
+            CultureInfo ci = new CultureInfo("sv-SE");
+            System.Threading.Thread.CurrentThread.CurrentCulture = ci;
+            //System.Threading.Thread.CurrentThread.CurrentUICulture = ci;
+
             int cellCount = 1;
                     for (int i = 0; i < meta.Variables.Count; i++)
                     {
