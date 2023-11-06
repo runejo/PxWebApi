@@ -8,8 +8,13 @@ We are currently developing PxWebApi 2.0
 
 ```sh
 curl -i -H "API_ADMIN_KEY: test" -X 'PUT'  https://localhost:5001/api/v2/admin/database
+```
+```sh
 curl -i -H "API_ADMIN_KEY: test" -X 'POST' https://localhost:5001/api/v2/admin/searchindex
-
+```
+```sh
 docker build -t pxwebapi .
+```
+```sh
 docker run -p 8080:8080 pxwebapi
 ```
