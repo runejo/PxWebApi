@@ -340,3 +340,6 @@ ASALocalRun/
 /**/_INDEX/*
 /PxWeb/wwwroot/ControllerStates/PxWeb.Controllers.Api2.Admin.DatabaseController.json
 /PxWeb/wwwroot/ControllerStates/PxWeb.Controllers.Api2.Admin.SearchindexController.json
+
+.vscode/*
+!.vscode/launch.json
