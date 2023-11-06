@@ -4,9 +4,12 @@ This is the official source code repository for PxWebApi. PxWeb is a nice web ap
 ## Current activities
 We are currently developing PxWebApi 2.0
 
-## Development notes
+## Developer notes
 
 ```sh
 curl -i -H "API_ADMIN_KEY: test" -X 'PUT'  https://localhost:5001/api/v2/admin/database
 curl -i -H "API_ADMIN_KEY: test" -X 'POST' https://localhost:5001/api/v2/admin/searchindex
+
+docker build -t pxwebapi .
+docker run -p 8080:8080 pxwebapi
 ```
