@@ -1,4 +1,5 @@
-# PxWebApi [![Mentioned in Awesome Official Statistics ](https://awesome.re/mentioned-badge.svg)](http://www.awesomeofficialstatistics.org)
+# PxWebApi [![Mentioned in Awesome Official Statistics ](https://awesome.re/mentioned-badge.svg)](http://www.awesomeofficialstatistics.org) [![MSBuild](https://github.com/runejo/PxWebApi/actions/workflows/msbuild.yml/badge.svg)](https://github.com/runejo/PxWebApi/actions/workflows/msbuild.yml)
+
 This is the official source code repository for PxWebApi. PxWeb is a nice web application for dissemination of statistical tables please read more abou it at the official web page on Statistics Sweden web site at [www.scb.se/px-web](https://www.scb.se/px-web).
 
 ## Current activities
