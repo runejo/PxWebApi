@@ -19,6 +19,11 @@ curl -i -H "API_ADMIN_KEY: test" -X 'POST' https://localhost:5001/api/v2/admin/s
 ```sh
 docker build -t pxwebapi .
 docker run -p 8080:8080 pxwebapi
+
+# multi platform build
+docker buildx create --use --platform linux/amd64,linux/arm64   
+docker buildx build --platform linux/amd64,linux/arm64 --push --tag runejo/pxwebapi:2.0-beta .
+
 ```
 ```sh
 DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
