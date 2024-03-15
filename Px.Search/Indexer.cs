@@ -1,22 +1,8 @@
-﻿using Px.Abstractions.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using PCAxis.Menu;
-using System.Net.Http;
-using System.Data;
-using System.IO;
-using PCAxis.Paxiom;
-using PCAxis.Paxiom.Extensions;
-using Microsoft.Extensions.Logging;
-using PCAxis.Paxiom.Localization;
-using System.Collections;
-
-
-namespace Px.Search
+﻿namespace Px.Search
 {
+    /// <summary>
+    /// Moves data from IDataSource to ISearchBackend.
+    /// </summary>
     public class Indexer
     {
         private IDataSource _source;

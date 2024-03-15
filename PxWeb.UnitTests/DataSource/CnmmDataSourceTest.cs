@@ -1,13 +1,4 @@
-﻿using Microsoft.Extensions.Caching.Memory;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
-using PxWeb.Code.Api2.Cache;
-using PxWeb.Code.Api2.DataSource.Cnmm;
-using PxWeb.Code.Api2.DataSource.PxFile;
-using PxWeb.Config.Api2;
-using PxWeb.Mappers;
-
-namespace PxWeb.UnitTests.DataSource
+﻿namespace PxWeb.UnitTests.DataSource
 {
     [TestClass]
     public class CnmmDataSourceTest
@@ -126,8 +117,6 @@ namespace PxWeb.UnitTests.DataSource
 
             var datasource = new CnmmDataSource(configServiceMock.Object, resolver, tablePathResolver, codelistMapperMock.Object);
 
-            bool selectionExists;
-
             var result = datasource.TableExists("Befolkning", language);
 
             Assert.IsTrue(result);
@@ -158,8 +147,6 @@ namespace PxWeb.UnitTests.DataSource
             var tablePathResolver = new TablePathResolverCnmm(configServiceMock.Object, resolver);
 
             var datasource = new CnmmDataSource(configServiceMock.Object, resolver, tablePathResolver, codelistMapperMock.Object);
-
-            bool selectionExists;
 
             var result = datasource.TableExists("select * from Befolkning", language);
 

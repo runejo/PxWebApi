@@ -1,7 +1,5 @@
-﻿using Newtonsoft.Json.Serialization;
-using Newtonsoft.Json;
-using System.Collections.Generic;
-using System;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using System.Linq;
 
 namespace PxWeb.Code.Api2.NewtonsoftConfiguration
@@ -12,9 +10,17 @@ namespace PxWeb.Code.Api2.NewtonsoftConfiguration
     /// </summary>
     public class BaseFirstContractResolver : DefaultContractResolver
     {
-        protected override IList<JsonProperty> CreateProperties(Type type, MemberSerialization memberSerialization) =>
-            base.CreateProperties(type, memberSerialization)
-                ?.OrderBy(p => p.DeclaringType.BaseTypesAndSelf().Count()).ToList();
+        protected override IList<JsonProperty> CreateProperties(Type type, MemberSerialization memberSerialization)
+        {
+            var props = base.CreateProperties(type, memberSerialization);
+            if (props == null)
+            {
+                throw new ArgumentNullException();
+            }
+            return props.OrderBy(p => p.DeclaringType.BaseTypesAndSelf().Count()).ToList();
+            
+        }
+
     }
 
 }

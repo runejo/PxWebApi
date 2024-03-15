@@ -1,10 +1,5 @@
-﻿using J2N.Text;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
 using PxWeb.Api2.Server.Models;
-using PxWeb.Config.Api2;
-using System.Net.Http;
-using System.Runtime.InteropServices;
 using System.Text;
 
 namespace PxWeb.Mappers
@@ -28,7 +23,7 @@ namespace PxWeb.Mappers
         {
             _urlBase = configOptions.Value.BaseURL;
         }
-        public Link GetTablesLink(LinkRelationEnum relation, string language, string query, int pagesize, int pageNumber, bool showLangParam = true)
+        public Link GetTablesLink(LinkRelationEnum relation, string language, string? query, int pagesize, int pageNumber, bool showLangParam = true)
         {
             var link = new Link();
             link.Rel = relation.ToString();
@@ -102,7 +97,7 @@ namespace PxWeb.Mappers
 
             return sb.ToString();
         }
-        private string CreatePageURL(string endpointUrl, string language, bool showLangParam, string query, int pagesize, int pageNumber)
+        private string CreatePageURL(string endpointUrl, string language, bool showLangParam, string? query, int pagesize, int pageNumber)
         {
             StringBuilder sb = new StringBuilder();
 

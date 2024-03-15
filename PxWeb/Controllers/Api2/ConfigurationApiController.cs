@@ -1,20 +1,10 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AspNetCoreRateLimit;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using org.sdmx;
-using PxWeb.Api2.Server.Models;
-using PxWeb.Attributes.Api2;
-using PxWeb.Config.Api2;
-using Swashbuckle.AspNetCore.Annotations;
-using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Linq;
-using AspNetCoreRateLimit;
-using System.Security.Cryptography.X509Certificates;
-using Language = PxWeb.Api2.Server.Models.Language;
-using System.Reflection.Metadata;
 using Microsoft.Extensions.Options;
+using PxWeb.Api2.Server.Models;
+using System.Linq;
+using Language = PxWeb.Api2.Server.Models.Language;
 
 namespace PxWeb.Controllers.Api2
 {
@@ -66,11 +56,13 @@ namespace PxWeb.Controllers.Api2
                 }
                 catch (Exception ex)
                 {
+                    _logger.LogError(ex, "Something bad in config of rateLimiting.");
                     //Use default values for timewindow and maxCalls if an exeption occurs
                     timeWindow = DefaultTimeWindow;
                     maxCallsPerTimeWindow = DefaultMaxCallsPerTimeWindow;
                 }
 
+               
                 var configResponse = new ConfigResponse
                 {
                     ApiVersion = op.ApiVersion,
@@ -80,11 +72,6 @@ namespace PxWeb.Controllers.Api2
                         Label = x.Label
                     }
                     ).ToList(),
-                    SourceReferences = op.SourceReferences.Select(x => new SourceReference
-                    {
-                        Language = x.Language,
-                        Text = x.Text
-                    }).ToList(),
                     Features = new List<ApiFeature>(),
                     DefaultLanguage = op.DefaultLanguage,
                     License = op.License,
@@ -95,8 +82,19 @@ namespace PxWeb.Controllers.Api2
                     DataFormats = op.OutputFormats
                 };
 
+                if( op.SourceReferences  != null) {
+                    configResponse.SourceReferences = op.SourceReferences.Select(x => new PxWeb.Api2.Server.Models.SourceReference
+                    {
+                        Language = x.Language,
+                        Text = x.Text
+                    }).ToList();
+                }
+
                 ApiFeature cors = new ApiFeature() { Id = "CORS", Params = new List<PxWeb.Api2.Server.Models.KeyValuePair>() };
-                PxWeb.Api2.Server.Models.KeyValuePair keyValuePair = new PxWeb.Api2.Server.Models.KeyValuePair() { Key = "enabled", Value = op.Cors.Enabled.ToString() };
+
+                bool myCorsEnabled = (op.Cors == null) ? false : op.Cors.Enabled;
+
+                PxWeb.Api2.Server.Models.KeyValuePair keyValuePair = new PxWeb.Api2.Server.Models.KeyValuePair() { Key = "enabled", Value = myCorsEnabled.ToString() };
                 cors.Params.Add(keyValuePair);
                 configResponse.Features.Add(cors);
 
@@ -105,12 +103,12 @@ namespace PxWeb.Controllers.Api2
             }
             catch (NullReferenceException ex)
             {
-                _logger.LogError("GetConfiguration caused an exception", ex);
+                _logger.LogError(ex, "GetConfiguration caused an exception");
             }
             return StatusCode(500, new Problem() { Status = 500, Title = "Something went wrong fetching the API configuration", Type = "https://TODO/ConfigError", });
         }
 
-        private int GetTimeWindowInSek(string timeWindowRuel )
+        private static int GetTimeWindowInSek(string timeWindowRuel)
         {
             string periodFormText = timeWindowRuel.ToLower()[timeWindowRuel.Length-1].ToString();
             string periodFormTime = timeWindowRuel.Remove(timeWindowRuel.Length - 1, 1);

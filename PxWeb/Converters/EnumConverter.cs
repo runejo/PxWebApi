@@ -1,7 +1,6 @@
 ﻿using PxWeb.Api2.Server.Models;
-using System.Runtime.Serialization;
-using System;
 using System.Linq;
+using System.Runtime.Serialization;
 
 namespace PxWeb.Converters
 {
@@ -14,7 +13,15 @@ namespace PxWeb.Converters
 
             foreach (var name in Enum.GetNames(enumType))
             {
-                var enumMemberAttribute = ((EnumMemberAttribute[])enumType.GetField(name).GetCustomAttributes(typeof(EnumMemberAttribute), true)).Single();
+                var type = enumType.GetField(name);
+
+                if (type == null)
+                {
+                    throw new System.ArgumentNullException("Enum type not found");
+                }
+
+                var enumMemberAttribute = ((EnumMemberAttribute[])type.GetCustomAttributes(typeof(EnumMemberAttribute), true)).Single();
+
                 if (enumMemberAttribute.Value == category)
                 {
                     Table.CategoryEnum categoryEnum = (Table.CategoryEnum)Enum.Parse(enumType, name);

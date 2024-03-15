@@ -1,8 +1,7 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using PxWeb.Config.Api2;
-using System;
+
 
 namespace PxWeb.Code.Api2.Cache
 {
@@ -82,8 +81,6 @@ namespace PxWeb.Code.Api2.Cache
         {
             if (_cache.Get(key) is null)
             {
-                _logger.LogDebug("Adding key={0} to Cache", key);
-
                 lock (_cacheLock)
                 {
                     if (_cache.Get(key) is null)
