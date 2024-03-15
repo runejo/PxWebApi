@@ -1,18 +1,12 @@
-﻿using Lucene.Net.Analysis.Standard;
-using Lucene.Net.Index;
-using Lucene.Net.Search;
-using Lucene.Net.Store;
-using Lucene.Net.Util;
-using Lucene.Net.QueryParsers.Classic;
-using Lucene.Net.Documents;
-using Lucene.Net.Queries;
+﻿
 
 namespace Px.Search.Lucene
 {
     public class LuceneSearcher : ISearcher
     {
-        private IndexSearcher _indexSearcher;
-        private static Operator _defaultOperator = Operator.OR;
+        private readonly IndexSearcher _indexSearcher;
+        private static readonly Operator _defaultOperator = Operator.OR;
+        private readonly Analyzer _analyzer;
 
         /// <summary>
         /// Constructor
@@ -22,13 +16,14 @@ namespace Px.Search.Lucene
         {
             if (string.IsNullOrWhiteSpace(indexDirectory))
             {
-                throw new ArgumentNullException("Index directory not defined for Lucene");
+                throw new ArgumentNullException(indexDirectory, "Index directory not defined for Lucene");
             }
 
             FSDirectory fsDir = FSDirectory.Open(Path.Combine(indexDirectory, language));
 
             IndexReader reader = DirectoryReader.Open(fsDir);
             _indexSearcher = new IndexSearcher(reader);
+            _analyzer = LuceneAnalyzer.GetAnalyzer(language);
         }
 
 
@@ -47,11 +42,10 @@ namespace Px.Search.Lucene
             var searchResultContainer = new SearchResultContainer();
             var searchResultList = new List<SearchResult>();
             string[] fields = GetSearchFields();
-            LuceneVersion luceneVersion = LuceneVersion.LUCENE_48;
             Query luceneQuery;
-            QueryParser queryParser = new MultiFieldQueryParser(luceneVersion,
+            QueryParser queryParser = new MultiFieldQueryParser(LuceneAnalyzer.luceneVersion,
                                                        fields,
-                                                       new StandardAnalyzer(luceneVersion));
+                                                        _analyzer);
             BooleanFilter filter = new BooleanFilter();
             queryParser.DefaultOperator = _defaultOperator;
 
@@ -111,9 +105,9 @@ namespace Px.Search.Lucene
         /// <returns></returns>
         public SearchResult FindTable(string tableId)
         {
-            
+
             string[] field = new[] { SearchConstants.SEARCH_FIELD_SEARCHID };
-            LuceneVersion luceneVersion = LuceneVersion.LUCENE_48;
+            LuceneVersion luceneVersion = LuceneAnalyzer.luceneVersion;
             Query luceneQuery;
             QueryParser queryParser = new MultiFieldQueryParser(luceneVersion,
                                                        field,
@@ -124,7 +118,7 @@ namespace Px.Search.Lucene
 
             Document doc = _indexSearcher.Doc(topDocs.ScoreDocs[0].Doc);
             return GetSearchResult(doc);
-                      
+
         }
 
         /// <summary>
@@ -160,7 +154,7 @@ namespace Px.Search.Lucene
             searchResult.LastPeriod = doc.Get(SearchConstants.SEARCH_FIELD_LASTPERIOD);
             searchResult.Tags = doc.Get(SearchConstants.SEARCH_FIELD_TAGS).Split(" ");
             searchResult.Updated = String.IsNullOrEmpty(doc.Get(SearchConstants.SEARCH_FIELD_UPDATED)) ? null : DateTools.StringToDate(doc.Get(SearchConstants.SEARCH_FIELD_UPDATED));
-            searchResult.Label = doc.Get(SearchConstants.SEARCH_FIELD_TITLE);            
+            searchResult.Label = doc.Get(SearchConstants.SEARCH_FIELD_TITLE);
 
             return searchResult;
         }
@@ -175,7 +169,7 @@ namespace Px.Search.Lucene
 
             // Default fields
             fields = new[] { SearchConstants.SEARCH_FIELD_DOCID,
-                                SearchConstants.SEARCH_FIELD_SEARCHID,                                
+                                SearchConstants.SEARCH_FIELD_SEARCHID,
                                 SearchConstants.SEARCH_FIELD_UPDATED,
                                 SearchConstants.SEARCH_FIELD_MATRIX,
                                 SearchConstants.SEARCH_FIELD_TITLE,
