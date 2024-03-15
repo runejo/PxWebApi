@@ -1,5 +1,7 @@
-﻿using PxWeb.Code.BackgroundWorker;
-using System.Linq;
+﻿using System.Linq;
+
+using PxWeb.Code.BackgroundWorker;
+using PxWeb.Code.PxDatabase;
 
 namespace PXWeb.Database
 {
@@ -32,16 +34,16 @@ namespace PXWeb.Database
             logger = new DatabaseLogger(LogMessage);
         }
 
-        private List<IItemHandler> _handlers = new List<IItemHandler>();
+        private readonly List<IItemHandler> _handlers = new List<IItemHandler>();
         public List<IItemHandler> Handles { get { return _handlers; } }
 
-        private List<IDatabaseBuilder> _builders = new List<IDatabaseBuilder>();
+        private readonly List<IDatabaseBuilder> _builders = new List<IDatabaseBuilder>();
         public List<IDatabaseBuilder> Builders { get { return _builders; } }
 
-        private List<DatabaseMessage> _messages = new List<DatabaseMessage>();
+        private readonly List<DatabaseMessage> _messages = new List<DatabaseMessage>();
         public List<DatabaseMessage> Messages { get { return _messages; } }
 
-        private DatabaseLogger logger;
+        private readonly DatabaseLogger logger;
         private bool _stateLogging = false;
         private IControllerState? _responseState;
         private void LogMessage(DatabaseMessage msg)
@@ -120,7 +122,10 @@ namespace PXWeb.Database
             //allocates a new menu
             SignalStartNewLevel(path);
 
-            foreach (var item in System.IO.Directory.GetFiles(path))
+            string[] filesInDir = System.IO.Directory.GetFiles(path);
+            //Ensuring the languageless alias file is applied first:
+            Array.Sort(filesInDir, new AliasTxtFirstComparer());
+            foreach (var item in filesInDir)
             {
                 IItemHandler? handler = GetHandler(item);
                 if (handler != null)
