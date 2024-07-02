@@ -35,10 +35,8 @@ namespace PxWeb.Controllers.Api2
         private readonly ILanguageHelper _languageHelper;
         private readonly IFolderResponseMapper _folderResponseMapper;
 
-        public NavigationApiController(IDataSource dataSource, ISearchBackend backend, ILanguageHelper languageHelper, IFolderResponseMapper folderMapper)
+        public NavigationApiController(IDataSource dataSource, ILanguageHelper languageHelper, IFolderResponseMapper folderMapper)
         {
-            //TODO Remove  _backend = backend; from constructor
-
             _dataSource = dataSource;
             _languageHelper = languageHelper;
             _folderResponseMapper = folderMapper;
@@ -47,7 +45,7 @@ namespace PxWeb.Controllers.Api2
         /// <summary>
         /// Gets navigation item with the given id.
         /// HttpGet
-        /// Route /api/v2/navigation/{id}
+        /// Route /navigation/{id}
         /// </summary>
         /// <param name="id">Id</param>
         /// <param name="lang">The language if the default is not what you want.</param>
@@ -63,7 +61,7 @@ namespace PxWeb.Controllers.Api2
         /// <summary>
         /// Browse the database structure
         /// HttpGet
-        /// Route /api/v2/navigation
+        /// Route /navigation
         /// </summary>
         /// <param name="lang">The language if the default is not what you want.</param>
         /// <response code="200">Success</response>
