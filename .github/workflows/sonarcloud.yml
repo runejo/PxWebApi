@@ -1,4 +1,4 @@
-name: MSBuild
+name: SonarCloud
 
 on:
   push:
@@ -31,6 +31,9 @@ jobs:
      
       - name: Coverage
         run: |
-            dotnet restore
+            dotnet sonarscanner begin /k:"runejo_PxWebApi"
+                /d:sonar.token=${{ secrets.SONAR_TOKEN }}
+                /d:sonar.cs.vscoveragexml.reportsPaths=coverage.xml
             dotnet build --no-incremental
             dotnet-coverage collect "dotnet test" -f xml -o "coverage.xml"
+            dotnet sonarscanner end /d:sonar.token=${{ secrets.SONAR_TOKEN }}
