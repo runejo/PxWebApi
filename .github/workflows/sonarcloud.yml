@@ -32,6 +32,7 @@ jobs:
       - name: Coverage
         run: |
             dotnet sonarscanner begin /k:"runejo_PxWebApi"
+                /o:"runejo"
                 /d:sonar.token=${{ secrets.SONAR_TOKEN }}
                 /d:sonar.cs.vscoveragexml.reportsPaths=coverage.xml
             dotnet build --no-incremental
