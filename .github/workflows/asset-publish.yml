@@ -8,7 +8,11 @@ on:
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        arch: [win-x64, linux-x64]
+
     steps:
       - uses: actions/checkout@v4
 
@@ -18,13 +22,13 @@ jobs:
           global-json-file: "./global.json"
 
       - name: Restore dependencies
-        run: dotnet restore --runtime win-x64
+        run: dotnet restore --runtime ${{ matrix.arch }}
 
       - name: Build the application
-        run: dotnet build --no-restore --runtime win-x64 PxWeb/PxWeb.csproj
+        run: dotnet build --no-restore --runtime ${{ matrix.arch }} PxWeb/PxWeb.csproj
 
       - name: Publish the application
-        run: dotnet publish --runtime win-x64 --output ./release PxWeb/PxWeb.csproj
+        run: dotnet publish --runtime ${{ matrix.arch }} --output ./release PxWeb/PxWeb.csproj
 
       - name: Create zip file
-        run: zip -r release-win-x64.zip ./release
+        run: zip -r release-${{ matrix.arch }}.zip ./release
