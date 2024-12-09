@@ -38,7 +38,7 @@ jobs:
   docker:
     runs-on: ubuntu-latest
     env:
-      IMAGE_NAME: runejo/pxwebapi:latest
+      IMAGE_NAME: runejo/pxwebapi:${{ github.sha }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
