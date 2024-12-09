@@ -18,10 +18,10 @@ jobs:
           global-json-file: "./global.json"
 
       - name: Restore dependencies
-        run: dotnet restore
+        run: dotnet restore --runtime win-x64
 
       - name: Build the application
-        run: dotnet build --no-restore
+        run: dotnet build --no-restore --runtime win-x64
 
       - name: Publish the application
         run: dotnet publish --no-build --runtime win-x64 --output ./release PxWeb/PxWeb.csproj
