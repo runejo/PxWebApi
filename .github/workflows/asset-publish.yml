@@ -6,12 +6,16 @@ on:
       - main
   pull_request:
 
+env:
+  RELEASE_VERSION: ${{ github.ref }}
+
 jobs:
   build:
     runs-on: ubuntu-latest
+
     strategy:
       matrix:
-        arch: [win-x64, linux-x64]
+        arch: [win-x64]
 
     steps:
       - uses: actions/checkout@v4
@@ -32,3 +36,6 @@ jobs:
 
       - name: Create zip file
         run: zip -r release-${{ matrix.arch }}.zip ./release
+
+      - name: Show zip size
+        run: du -sh release-${{ matrix.arch }}.zip
