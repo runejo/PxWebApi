@@ -1,0 +1,30 @@
+name: Publish release assets
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: "./global.json"
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build the application
+        run: dotnet build --no-restore
+
+      - name: Publish the application
+        run: dotnet publish --no-build --runtime win-x64 --output ./release PxWeb/PxWeb.csproj
+
+      - name: Create zip file
+        run: zip -r release-win-x64.zip ./release
