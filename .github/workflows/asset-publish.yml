@@ -21,7 +21,7 @@ jobs:
         run: dotnet restore --runtime win-x64
 
       - name: Build the application
-        run: dotnet build --no-restore --runtime win-x64
+        run: dotnet build --no-restore --runtime win-x64 PxWeb/PxWeb.csproj
 
       - name: Publish the application
         run: dotnet publish --no-build --runtime win-x64 --output ./release PxWeb/PxWeb.csproj
