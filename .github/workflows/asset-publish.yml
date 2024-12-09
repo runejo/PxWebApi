@@ -35,7 +35,11 @@ jobs:
         run: dotnet publish --runtime ${{ matrix.arch }} --output ./release PxWeb/PxWeb.csproj
 
       - name: Create zip file
-        run: zip -r release-${{ matrix.arch }}.zip ./release
+        run: zip -x release/wwwroot/Database/\* -r release-${{ matrix.arch }}.zip ./release
 
       - name: Show zip size
         run: du -sh release-${{ matrix.arch }}.zip
+
+      - name: Upload release asset
+        run: |
+          gh release list
