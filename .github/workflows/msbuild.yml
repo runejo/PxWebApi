@@ -54,7 +54,7 @@ jobs:
           push: false
           tags: ${{ env.IMAGE_NAME }}
       - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@0.29.0
         with:
           scan-type: image
           image-ref: ${{ env.IMAGE_NAME }}
