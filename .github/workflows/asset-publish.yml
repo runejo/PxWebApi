@@ -24,7 +24,7 @@ jobs:
         run: dotnet build --no-restore --runtime win-x64 PxWeb/PxWeb.csproj
 
       - name: Publish the application
-        run: dotnet publish --no-build --runtime win-x64 --output ./release PxWeb/PxWeb.csproj
+        run: dotnet publish --runtime win-x64 --output ./release PxWeb/PxWeb.csproj
 
       - name: Create zip file
         run: zip -r release-win-x64.zip ./release
