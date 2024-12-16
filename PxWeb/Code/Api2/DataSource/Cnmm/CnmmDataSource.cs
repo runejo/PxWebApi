@@ -179,7 +179,7 @@ namespace PxWeb.Code.Api2.DataSource.Cnmm
             }
             if (child.StartTime == child.EndTime) //Starttime and Endtime are the same, only starttime should be added
             {
-                sb.Append(" ");
+                sb.Append(' ');
                 sb.Append(child.StartTime);
                 return sb.ToString();
             }
@@ -190,13 +190,13 @@ namespace PxWeb.Code.Api2.DataSource.Cnmm
                 sb.Append(child.StartTime);
                 sb.Append(")-(");
                 sb.Append(child.EndTime);
-                sb.Append(")");
+                sb.Append(')');
             }
             else
             {
-                sb.Append(" ");
+                sb.Append(' ');
                 sb.Append(child.StartTime);
-                sb.Append("-");
+                sb.Append('-');
                 sb.Append(child.EndTime);
             }
 
@@ -213,7 +213,6 @@ namespace PxWeb.Code.Api2.DataSource.Cnmm
         private Codelist? GetGrouping(string id, string language)
         {
             Codelist? codelist = null;
-            var cnmmOptions = _cnmmConfigurationService.GetConfiguration();
 
             if (id.StartsWith("agg_", System.StringComparison.InvariantCultureIgnoreCase))
             {
@@ -221,8 +220,8 @@ namespace PxWeb.Code.Api2.DataSource.Cnmm
                 id = id.Substring(4);
             }
 
-            PCAxis.Sql.Repositories.GroupingRepository repo = new PCAxis.Sql.Repositories.GroupingRepository(cnmmOptions.DatabaseID);
-            PCAxis.Sql.Models.Grouping grouping = repo.GetGrouping(id, language);
+            var util = new PCAxis.Sql.ApiUtils.ApiUtil();
+            PCAxis.Sql.Models.Grouping grouping = util.GetGrouping(id, language);
 
             if (grouping != null)
             {
@@ -235,7 +234,6 @@ namespace PxWeb.Code.Api2.DataSource.Cnmm
         private Codelist? GetValueset(string id, string language)
         {
             Codelist? codelist = null;
-            var cnmmOptions = _cnmmConfigurationService.GetConfiguration();
 
             if (id.StartsWith("vs_", System.StringComparison.InvariantCultureIgnoreCase))
             {
@@ -243,8 +241,8 @@ namespace PxWeb.Code.Api2.DataSource.Cnmm
                 id = id.Substring(3);
             }
 
-            PCAxis.Sql.Repositories.ValueSetRepository repo = new PCAxis.Sql.Repositories.ValueSetRepository(cnmmOptions.DatabaseID);
-            PCAxis.Sql.Models.ValueSet valueset = repo.GetValueSet(id, language);
+            var util = new PCAxis.Sql.ApiUtils.ApiUtil();
+            PCAxis.Sql.Models.ValueSet valueset = util.GetValueSet(id, language);
 
             if (valueset != null)
             {
