@@ -68,7 +68,7 @@ namespace PxWeb.Mappers
                 linkList.Add(_linkCreator.GetTableLink(LinkCreator.LinkRelationEnum.self, item.Id.ToUpper(), lang, true));
 
                 // Links to metadata
-                linkList.AddRange(_linkCreator.GetTableMetadataJsonLink(LinkCreator.LinkRelationEnum.metadata, item.Id.ToUpper(), lang, true));
+                linkList.Add(_linkCreator.GetTableMetadataJsonLink(LinkCreator.LinkRelationEnum.metadata, item.Id.ToUpper(), lang, true));
 
                 // Links to data
                 linkList.Add(_linkCreator.GetTableDataLink(LinkCreator.LinkRelationEnum.data, item.Id.ToUpper(), lang, true));
@@ -78,6 +78,9 @@ namespace PxWeb.Mappers
                     Type = FolderContentItemTypeEnum.TableEnum,
                     Id = item.Id,
                     Label = item.Label,
+                    Source = item.Source,
+                    TimeUnit = TableResponseMapper.Convert(item.TimeUnit),
+                    Paths = TableResponseMapper.Convert(item.Paths),
                     Description = item.Description,
                     //Tags = item.Tags.ToList(), // TODO: Implement later
                     Updated = item.Updated,

@@ -1,7 +1,7 @@
 {
   "version": "2.0",
   "class": "dataset",
-  "href": "https://www.pxapi.com/api/v2/tables/TAB004/metadata?lang=en\u0026outputFormat=json-stat2",
+  "href": "https://www.pxapi.com/api/v2/tables/TAB004/metadata?lang=en",
   "label": "Total air emissions by sector, greenhouse gas, contents and year",
   "source": "Statistics Sweden",
   "updated": "VALUE_HAS_BEEN_REPLACED",
@@ -79,8 +79,7 @@
       "extension": {
         "elimination": false,
         "show": "value",
-        "codeLists": [],
-        "timeUnit": 0
+        "codeLists": []
       }
     },
     "GREENHOUSEGAS": {
@@ -121,8 +120,7 @@
       "extension": {
         "elimination": false,
         "show": "value",
-        "codeLists": [],
-        "timeUnit": 0
+        "codeLists": []
       }
     },
     "ContentsCode": {
@@ -145,7 +143,15 @@
         "elimination": false,
         "show": "value",
         "codeLists": [],
-        "timeUnit": 0
+        "measuringType": {
+          "Emission": "Stock"
+        },
+        "priceType": {
+          "Emission": "NotApplicable"
+        },
+        "adjustment": {
+          "Emission": "None"
+        }
       }
     },
     "TIME": {
@@ -215,8 +221,7 @@
       "extension": {
         "elimination": false,
         "show": "code",
-        "codeLists": [],
-        "timeUnit": 0
+        "codeLists": []
       }
     }
   },
@@ -227,6 +232,7 @@
       "decimals": 0,
       "official-statistics": false,
       "aggregallowed": false,
+      "copyright": true,
       "language": "en",
       "contents": "Total air emissions",
       "descriptiondefault": false,
@@ -244,10 +250,25 @@
     },
     "contact": [
       {
-        "raw": "Test Testsson, SCB#Tel: 08-111 222 33#Fax: 08-222 333 44#E-mail: test.testsson@scb.se"
+        "name": "Test Testsson",
+        "organization": "SCB",
+        "phone": "08-111 222 33",
+        "mail": "test.testsson@scb",
+        "raw": "Test Testsson, SCB# 08-111 222 33#test.testsson@scb"
       },
       {
-        "raw": "Test2 Testsson2, SCB#Tel: 08-333 444 55#Fax: 08-444 555 66#E-mail: test2.testsson2@scb.se"
+        "name": "Test2 Testsson2",
+        "organization": "SCB",
+        "phone": "08-111 222 32",
+        "mail": "test.testsson2@scb",
+        "raw": "Test2 Testsson2, SCB# 08-111 222 32#test.testsson2@scb"
+      },
+      {
+        "name": "",
+        "organization": "just organization",
+        "phone": "",
+        "mail": "",
+        "raw": " , just organization# "
       }
     ]
   }
