@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Mvc;
@@ -9,6 +10,7 @@ using Microsoft.Extensions.Logging;
 using Px.Abstractions.Interfaces;
 using Px.Search;
 
+using PxWeb.Code;
 using PxWeb.Code.BackgroundWorker;
 
 using Swashbuckle.AspNetCore.Annotations;
@@ -47,32 +49,52 @@ namespace PxWeb.Controllers.Api2.Admin
         [SwaggerOperation("IndexDatabase")]
         [SwaggerResponse(statusCode: 202, description: "Accepted")]
         [SwaggerResponse(statusCode: 401, description: "Unauthorized")]
-        public IActionResult IndexDatabase()
+        public IActionResult IndexDatabase(int? pastHours)
         {
             _backgroundWorkerQueue.QueueBackgroundWorkItem(async token =>
             {
-                try
+                if (pastHours is not null)
                 {
-                    List<string> languages = new List<string>();
-
-                    var config = _pxApiConfigurationService.GetConfiguration();
-
-                    if (config.Languages.Count == 0)
+                    try
                     {
-                        _logger.LogError("No languages configured for PxApi. New index will not be created.");
-                        return;
-                    }
-                    foreach (var lang in config.Languages)
-                    {
-                        languages.Add(lang.Id);
-                    }
+                        DateTime to = DateTime.Now;
+                        DateTime from = to - TimeSpan.FromHours(pastHours.Value);
+                        List<string> tableList = _dataSource.GetTablesPublishedBetween(from, to);
 
-                    Indexer indexer = new Indexer(_dataSource, _backend, _logger);
-                    await Task.Run(() => indexer.IndexDatabase(languages), token);
+                        string message = $"Looked for tables published between {from:yyyy-MM-dd HH:mm:ss} and {to:yyyy-MM-dd HH:mm:ss}. Found {tableList.Count()}";
+
+                        _responseState.AddEvent(new Event("Information", message));
+                        _logger.LogUpdatedTableBetween(from, to, tableList.Count);
+                        if (tableList.Count > 0)
+                        {
+
+                            await UpdateFromTableList(tableList, token);
+                        }
+                    }
+                    catch (System.Exception ex)
+                    {
+                        _responseState.AddEvent(new Event("Error", ex.Message));
+                        _logger.LogFaildToIndexDatabase(ex);
+                    }
                 }
-                catch (System.Exception ex)
+                else
                 {
-                    _logger.LogError(ex, "Error when building search index");
+                    try
+                    {
+                        List<string> languages = GetLangaugesFromConfig();
+                        if (languages.Count == 0)
+                        {
+                            return;
+                        }
+
+                        Indexer indexer = new Indexer(_dataSource, _backend, _logger);
+                        await Task.Run(() => indexer.IndexDatabase(languages), token);
+                    }
+                    catch (System.Exception ex)
+                    {
+                        _responseState.AddEvent(new Event("Error", ex.Message));
+                        _logger.LogFaildToIndexDatabase(ex);
+                    }
                 }
             });
             return new AcceptedResult();
@@ -94,44 +116,41 @@ namespace PxWeb.Controllers.Api2.Admin
             {
                 try
                 {
-                    List<string> languages = new List<string>();
                     List<string> tableList = tables
                         .Select(table => Regex.Replace(table.Trim(), @"[^0-9a-zA-Z]+", "", RegexOptions.None, TimeSpan.FromMilliseconds(100)))
                         .ToList();
 
-                    if (tableList.Count == 0)
-                    {
-                        string message = "Incoming list with table id's to be updated is empty. Index will not be updated.";
-                        _logger.LogError(message);
-                        _responseState.AddEvent(new Event("Error", message));
-                        return;
-                    }
-
-                    var config = _pxApiConfigurationService.GetConfiguration();
-
-                    if (config.Languages.Count == 0)
-                    {
-                        string message = "No languages configured for PxApi. Index will not be updated.";
-                        _logger.LogError(message);
-                        _responseState.AddEvent(new Event("Error", message));
-                        return;
-                    }
-
-                    foreach (var lang in config.Languages)
-                    {
-                        languages.Add(lang.Id);
-                    }
-
-                    Indexer indexer = new Indexer(_dataSource, _backend, _logger);
-                    await Task.Run(() => indexer.UpdateTableEntries(tableList, languages), token);
+                    await UpdateFromTableList(tableList, token);
                 }
                 catch (System.Exception ex)
                 {
                     _responseState.AddEvent(new Event("Error", ex.Message));
-                    _logger.LogError(ex.Message);
+                    _logger.LogFaildToIndexDatabase(ex);
                 }
+
+
             });
             return new AcceptedResult();
+        }
+
+        private async Task UpdateFromTableList(List<string> tableList, CancellationToken token)
+        {
+            if (tableList.Count == 0)
+            {
+                string message = "Incoming list with table id's to be updated is empty. Index will not be updated.";
+                _responseState.AddEvent(new Event("Information", message));
+                _logger.LogNoTablesIndexWillNotUpdate();
+                return;
+            }
+
+            List<string> languages = GetLangaugesFromConfig();
+            if (languages.Count == 0)
+            {
+                return;
+            }
+
+            Indexer indexer = new Indexer(_dataSource, _backend, _logger);
+            await Task.Run(() => indexer.UpdateTableEntries(tableList, languages), token);
         }
 
         [HttpGet]
@@ -142,6 +161,26 @@ namespace PxWeb.Controllers.Api2.Admin
         public IActionResult GetState()
         {
             return new JsonResult(_responseState.Data);
+        }
+
+        private List<string> GetLangaugesFromConfig()
+        {
+            List<string> languages = new List<string>();
+            var config = _pxApiConfigurationService.GetConfiguration();
+
+            if (config.Languages.Count == 0)
+            {
+                string message = "No languages configured. Index will not be updated.";
+                _responseState.AddEvent(new Event("Error", message));
+                _logger.LogNoLanguageIndexWillNotUpdate();
+                return languages;
+            }
+
+            foreach (var lang in config.Languages)
+            {
+                languages.Add(lang.Id);
+            }
+            return languages;
         }
     }
 }
