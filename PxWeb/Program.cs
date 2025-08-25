@@ -4,6 +4,7 @@ using System.Text;
 using AspNetCoreRateLimit;
 
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -42,6 +43,18 @@ namespace PxWeb
 
             var builder = WebApplication.CreateBuilder(args);
 
+            // Paxiom settings
+            var omit = builder.Configuration.GetSection("PxApiConfiguration:OmitContentsInTitle");
+            if (omit != null && bool.TryParse(omit.Value, out bool omitContentsInTitle))
+            {
+                PCAxis.Paxiom.Settings.Metadata.OmitContentsVariableInTitle = omitContentsInTitle;
+            }
+            else
+            {
+                PCAxis.Paxiom.Settings.Metadata.OmitContentsVariableInTitle = true; // Default value
+            }
+
+
             // Only use Log4Net provider
             builder.Logging.ClearProviders();
             builder.Logging.AddLog4Net();
@@ -51,6 +64,20 @@ namespace PxWeb
 
             // needed to load configuration from appsettings.json
             builder.Services.AddOptions();
+
+            var hBuilder = builder.Services.AddHealthChecks()
+                            .AddCheck<MaintenanceHealthCheck>(
+                            "Maintenance",
+                            tags: new[] { "ready" });
+            var datasourceType = builder.Configuration.GetSection("DataSource:DataSourceType").Value ?? "PX";
+            if (datasourceType.Equals("CNMM", StringComparison.OrdinalIgnoreCase))
+            {
+                // var sqlQuery = builder.Configuration.GetSection("DataSource:CNMM:HealthCheckQuery").Value ?? CnmmConfigurationOptions.DEFAULT_QUERY;
+
+                hBuilder.AddCheck<SqlDbConnectionHealthCheck>(
+                    "Database",
+                    tags: new[] { "ready" });
+            }
 
             // needed to store rate limit counters and ip rules
             builder.Services.AddMemoryCache();
@@ -66,7 +93,23 @@ namespace PxWeb
 
             // configuration (resolvers, counter key builders)
             builder.Services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
-            builder.Services.AddSingleton<IPxCache, PxCache>();
+            builder.Services.AddSingleton<IPxCache>(provider =>
+            {
+                var logger = provider.GetRequiredService<ILogger<PxCache>>();
+                var instance = new PxCache(logger);
+
+                // Gör något med instansen innan den returneras
+                var clearTime = builder.Configuration.GetSection("PxApiConfiguration:CacheClearTime").Value;
+
+                if (clearTime != null && DateTime.TryParse(clearTime, out DateTime time))
+                {
+                    DefaultCacheClearer.SetNextClearTime(time);
+                    instance.SetCoherenceChecker(DefaultCacheClearer.CacheIsCoherent);
+                }
+
+                return instance;
+            });
+
             builder.Services.AddSingleton<ILinkCreator, LinkCreator>();
             builder.Services.AddSingleton<ISelectionHandler, SelectionHandler>();
             builder.Services.AddSingleton<IPlacementHandler, PlacementHandler>();
@@ -195,6 +238,17 @@ namespace PxWeb
                     appBuilder.UseAdminProtectionKey();
                 });
             }
+
+            app.MapHealthChecks("/healthz/live", new HealthCheckOptions
+            {
+                Predicate = _ => false
+            });
+
+            app.MapHealthChecks("/healthz/ready", new HealthCheckOptions
+            {
+                Predicate = healthCheck => healthCheck.Tags.Contains("ready")
+            });
+
             app.MapControllers();
 
             if (!app.Environment.IsDevelopment())
@@ -202,8 +256,9 @@ namespace PxWeb
                 app.UseIpRateLimiting();
             }
 
-            app.UseWhen(context => !(context.Request.Path.StartsWithSegments(pxApiConfiguration.RoutePrefix + "/admin") || context.Request.Path.StartsWithSegments("/admin")), appBuilder =>
+            app.UseWhen(context => !(context.Request.Path.StartsWithSegments(pxApiConfiguration.RoutePrefix + "/admin") || context.Request.Path.StartsWithSegments("/admin") || context.Request.Path.StartsWithSegments(pxApiConfiguration.RoutePrefix + "/healthz") || context.Request.Path.StartsWithSegments("/healthz")), appBuilder =>
             {
+                appBuilder.UseUsageLogMiddleware();
                 appBuilder.UseCacheMiddleware();
             });
 
