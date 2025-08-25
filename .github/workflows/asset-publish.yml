@@ -5,21 +5,18 @@ on:
     types:
       - published
 
-env:
-  GH_TOKEN: ${{ github.token }}
-  TAG_NAME: ${{ github.event.release.tag_name }}
-
 jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write
     strategy:
       matrix:
         arch: [win-x64]
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v5
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
@@ -42,6 +39,9 @@ jobs:
         run: du -sh release-${{ matrix.arch }}.zip
 
       - name: Upload release asset
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG_NAME: ${{ github.event.release.tag_name }}
         run: |
           gh release upload ${{ env.TAG_NAME }} release-${{ matrix.arch }}.zip
           gh release view ${{ env.TAG_NAME }}
