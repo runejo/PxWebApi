@@ -69,6 +69,12 @@ namespace PxWeb.Mappers
                 // Links to table
                 linkList.Add(_linkCreator.GetTableLink(LinkCreator.LinkRelationEnum.self, item.Id.ToUpper(), lang, true));
 
+                // Links to table in other languages
+                foreach (var language in _configOptions.Languages.Where(l => l.Id != lang && item.Languages.Contains(l.Id)).Select(l => l.Id))
+                {
+                    linkList.Add(_linkCreator.GetTableLink(LinkCreator.LinkRelationEnum.alternate, item.Id.ToUpper(), language, true));
+                }
+
                 // Links to metadata
                 linkList.Add(_linkCreator.GetTableMetadataJsonLink(LinkCreator.LinkRelationEnum.metadata, item.Id.ToUpper(), lang, true));
 
@@ -77,7 +83,6 @@ namespace PxWeb.Mappers
 
                 var tb = new Table()
                 {
-                    Type = FolderContentItemTypeEnum.TableEnum,
                     Id = item.Id,
                     Label = item.Label,
                     Source = item.Source,
@@ -88,7 +93,7 @@ namespace PxWeb.Mappers
                     Updated = item.Updated,
                     FirstPeriod = item.FirstPeriod,
                     LastPeriod = item.LastPeriod,
-                    Category = EnumConverter.ToCategoryEnum(item.Category),
+                    Category = EnumConverter.ToEnum<TableCategory>(item.Category),
                     Discontinued = item.Discontinued,
                     VariableNames = item.VariableNames.ToList(),
                     Links = linkList,

@@ -476,7 +476,7 @@ namespace PxWeb.Models.Api2
 
         }
 
-        public static void AddCodelist(DimensionValue dimensionValue, List<CodeListInformation> codeLists)
+        public static void AddCodelist(DimensionValue dimensionValue, List<CodelistInformation> codeLists)
         {
             if (dimensionValue.Extension is null)
             {
@@ -484,35 +484,9 @@ namespace PxWeb.Models.Api2
             }
             if (dimensionValue.Extension.CodeLists == null)
             {
-                dimensionValue.Extension.CodeLists = new List<CodeListInformation>();
+                dimensionValue.Extension.CodeLists = new List<CodelistInformation>();
             }
             dimensionValue.Extension.CodeLists.AddRange(codeLists);
-        }
-
-        public void AddLinksOnRoot(List<Link> links)
-        {
-
-            foreach (Link link in links)
-            {
-                if (link.Rel == "self")
-                {
-                    this.Href = link.Href;
-                }
-                else
-                {
-                    this.Link ??= new Dictionary<string, List<JsonstatLink>>();
-                    if (!this.Link.ContainsKey(link.Rel))
-                    {
-                        this.Link[link.Rel] = new List<JsonstatLink>();
-                    }
-                    JsonstatLink linkLink = new JsonstatLink();
-                    linkLink.Href = link.Href;
-                    this.Link[link.Rel].Add(linkLink);
-                }
-
-            }
-
-
         }
 
         public static void AddMeasuringType(DimensionValue dimensionValue, string valueCode, MeasuringType measuringType)

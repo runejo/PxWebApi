@@ -139,7 +139,7 @@ namespace PxWeb.Mappers
 
 
                 //Codelists
-                var codeLists = new System.Collections.Generic.List<CodeListInformation>();
+                var codeLists = new System.Collections.Generic.List<CodelistInformation>();
                 MapCodelists(codeLists, variable);
                 if (codeLists != null)
                 {
@@ -156,17 +156,7 @@ namespace PxWeb.Mappers
 
             AddTableNotes(model, dataset);
 
-            List<Link> linksOnRoot = new List<Link>();
-            linksOnRoot.Add(_linkCreator.GetTableMetadataJsonLink(LinkCreator.LinkRelationEnum.self, id.ToUpper(), language, true));
-            linksOnRoot.Add(_linkCreator.GetTableDataLink(LinkCreator.LinkRelationEnum.data, id.ToUpper(), language, true));
-
-            //"type": "application/json"
-
-            // TODO: Links to documentation
-            //if (!string.IsNullOrEmpty(model.Meta.MetaId))
-
-            dataset.AddLinksOnRoot(linksOnRoot);
-
+            dataset.Value = new List<double?>();
 
             return dataset;
         }
@@ -593,25 +583,25 @@ namespace PxWeb.Mappers
 
 
 
-        private CodeListInformation Map(PCAxis.Paxiom.GroupingInfo grouping)
+        private CodelistInformation Map(PCAxis.Paxiom.GroupingInfo grouping)
         {
-            CodeListInformation codelist = new CodeListInformation();
+            var codelist = new CodelistInformation();
 
             codelist.Id = "agg_" + grouping.ID;
             codelist.Label = grouping.Name;
-            codelist.Type = CodeListType.AggregationEnum;
+            codelist.Type = CodelistType.AggregationEnum;
             codelist.Links = new System.Collections.Generic.List<Link>();
             codelist.Links.Add(_linkCreator.GetCodelistLink(LinkCreator.LinkRelationEnum.metadata, codelist.Id, _language));
 
             return codelist;
         }
-        private CodeListInformation Map(PCAxis.Paxiom.ValueSetInfo valueset)
+        private CodelistInformation Map(PCAxis.Paxiom.ValueSetInfo valueset)
         {
-            CodeListInformation codelist = new CodeListInformation();
+            var codelist = new CodelistInformation();
 
             codelist.Id = "vs_" + valueset.ID;
             codelist.Label = valueset.Name;
-            codelist.Type = CodeListType.ValuesetEnum;
+            codelist.Type = CodelistType.ValuesetEnum;
             codelist.Links = new System.Collections.Generic.List<Link>();
             codelist.Links.Add(_linkCreator.GetCodelistLink(LinkCreator.LinkRelationEnum.metadata, codelist.Id, _language));
 
@@ -619,7 +609,7 @@ namespace PxWeb.Mappers
         }
 
 
-        private void MapCodelists(System.Collections.Generic.List<CodeListInformation> codelists, Variable variable)
+        private void MapCodelists(System.Collections.Generic.List<CodelistInformation> codelists, Variable variable)
         {
             if (variable.HasGroupings())
             {
