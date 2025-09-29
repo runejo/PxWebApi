@@ -141,6 +141,7 @@ namespace Px.Search.Lucene
                 var paths = oldDoc.GetBinaryValue(SearchConstants.SEARCH_FIELD_PATHS);
                 if (paths is not null)
                 {
+                    doc.RemoveField(SearchConstants.SEARCH_FIELD_PATHS);
                     doc.Add(new StoredField(SearchConstants.SEARCH_FIELD_PATHS, paths));
                 }
             }
@@ -187,7 +188,7 @@ namespace Px.Search.Lucene
                 }
 
                 doc.Add(new StringField(SearchConstants.SEARCH_FIELD_DOCID, tbl.Id, Field.Store.YES)); // Used as id when updating a document - NOT searchable!!!
-                doc.Add(new TextField(SearchConstants.SEARCH_FIELD_SEARCHID, tbl.Id, Field.Store.NO)); // Used for finding a document by id - will be used for generating URL from just the tableid - Searchable!!!
+                doc.Add(new StringField(SearchConstants.SEARCH_FIELD_SEARCHID, tbl.Id.ToLower(), Field.Store.NO)); // Used for finding a document by id - will be used for generating URL from just the tableid - Searchable!!!
                 doc.Add(new StringField(SearchConstants.SEARCH_FIELD_UPDATED, strUpdated, Field.Store.YES));
                 doc.Add(new TextField(SearchConstants.SEARCH_FIELD_MATRIX, meta.Matrix, Field.Store.YES));
                 doc.Add(new TextField(SearchConstants.SEARCH_FIELD_TITLE, tbl.Label, Field.Store.YES));
