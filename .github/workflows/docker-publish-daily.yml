@@ -3,7 +3,7 @@ name: Docker build and publish (nightly)
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0/5 * * * *"
+    - cron: "0/15 * * * *"
 
 env:
   REGISTRY: ghcr.io
