@@ -1,11 +1,11 @@
 name: Docker build and publish
 
 on:
-  release:
-    types:
-      - published
+  push:
+    tags:
+      - "v*"
   schedule:
-    - cron: "35 * * * *"
+    - cron: "50 * * * *"
 
 env:
   REGISTRY: ghcr.io
