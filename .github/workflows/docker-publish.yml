@@ -4,6 +4,8 @@ on:
   release:
     types:
       - published
+  schedule:
+    - cron: "35 * * * *"
 
 env:
   REGISTRY: ghcr.io
