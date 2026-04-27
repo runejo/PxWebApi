@@ -1,4 +1,4 @@
-# PxWeb Api[![Mentioned in Awesome Official Statistics ](https://awesome.re/mentioned-badge.svg)](http://www.awesomeofficialstatistics.org)
+# PxWeb Api[![Mentioned in Awesome Official Statistics](https://awesome.re/mentioned-badge.svg)](http://www.awesomeofficialstatistics.org) [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=runejo_PxWebApi&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=runejo_PxWebApi)
 
 This is the official source code repository for PxWebApi. PxWeb is a nice web application for dissemination of statistical tables please read more abou it at the official web page on Statistics Sweden web site at [www.scb.se/px-web](https://www.scb.se/px-web).
 
