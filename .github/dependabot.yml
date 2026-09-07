@@ -6,7 +6,7 @@
 version: 2
 updates:
   - package-ecosystem: "nuget"
-    directory: "/"
+    directory: "/PxWeb/"
     schedule:
       interval: "weekly"
     groups:
@@ -16,6 +16,10 @@ updates:
           - "minor"
     cooldown:
       default-days: 9
+      exclude:
+        - "PCAxis.Sql"
+        - "PCAxis.Serializers"
+        
 
   - package-ecosystem: "github-actions"
     directory: "/"

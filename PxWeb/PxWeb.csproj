@@ -36,6 +36,16 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="setup.ps1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="setup.ps1">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <None Include="wwwroot\README.md" />
     <None Include="wwwroot\web.config" />
   </ItemGroup>
@@ -47,16 +57,16 @@
     <PackageReference Include="Microsoft.Extensions.Options" Version="8.0.2" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
     <PackageReference Include="PCAxis.Menu.ConfigDatamodelMenu" Version="1.0.10" />
-    <PackageReference Include="PCAxis.Serializers" Version="1.11.0" />
-    <PackageReference Include="PcAxis.Sql" Version="1.6.1" />
+    <PackageReference Include="PCAxis.Serializers" Version="1.12.1" />
+    <PackageReference Include="PCAxis.Sql" Version="1.6.1" />
     <PackageReference Include="PxWeb.Api2.Server" Version="2.3.2" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.6" />
     <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="9.0.6" />
     <PackageReference Include="Swashbuckle.AspNetCore.Newtonsoft" Version="9.0.6" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="9.0.6" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="9.0.6" />
-    <PackageReference Include="System.IO.Hashing" Version="9.0.14" />
-    <PackageReference Include="System.IO.Packaging" Version="9.0.14" />
+    <PackageReference Include="System.IO.Hashing" Version="9.0.19" />
+    <PackageReference Include="System.IO.Packaging" Version="9.0.19" />
     <PackageReference Include="System.Net.Http" Version="4.3.4" />
     <PackageReference Include="System.Text.Encoding.CodePages" Version="8.0.0" />
     <PackageReference Include="System.Text.Json" Version="8.0.6" />
@@ -87,4 +97,10 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="PxWebApi_Mvc.Tests" />
+    <InternalsVisibleTo Include="PxWebApi.BigTests" />
+  </ItemGroup>
+
 </Project>
