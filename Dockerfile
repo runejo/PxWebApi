@@ -1,6 +1,6 @@
 # Learn about building .NET container images:
 # https://github.com/dotnet/dotnet-docker/blob/main/samples/README.md
-FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:8.0.425-alpine3.23 AS build
+FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:8.0-alpine@sha256:566b0dd501284d96c6e2fef35e1bd23c4f53e6699d1b76b9f7d7da56af723287 AS build
 ARG TARGETARCH
 WORKDIR /source
 
@@ -15,7 +15,7 @@ RUN \
 # Enable globalization and time zones:
 # https://github.com/dotnet/dotnet-docker/blob/main/samples/enable-globalization.md
 # final stage/image
-FROM mcr.microsoft.com/dotnet/aspnet:8.0.31-alpine3.23
+FROM mcr.microsoft.com/dotnet/aspnet:8.0-alpine@sha256:819714070a3a11a1df9ac9daa614c280e62c6aff7b13c29d3ba5498fcfc45e57
 EXPOSE 8080
 
 ENV \
