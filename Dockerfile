@@ -15,7 +15,7 @@ RUN \
 # Enable globalization and time zones:
 # https://github.com/dotnet/dotnet-docker/blob/main/samples/enable-globalization.md
 # final stage/image
-FROM mcr.microsoft.com/dotnet/aspnet:8.0-alpine@sha256:819714070a3a11a1df9ac9daa614c280e62c6aff7b13c29d3ba5498fcfc45e57
+FROM mcr.microsoft.com/dotnet/aspnet:8.0-alpine@sha256:fc9d161eefc515dd65749a45189ac9691cf9954a044fef23ac278e039c6e2ac4
 EXPOSE 8080
 
 ENV \
